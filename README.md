@@ -26,6 +26,5 @@ prefix.
 | `c`       | New window (same path)            |
 | `h/j/k/l` | Move between panes (vim-style)    |
 | `H/J/K/L` | Resize the current pane           |
-| `S`       | Swap with selected pane           |
 
 In copy mode (vi keys): `v` starts a selection, `y` copies and exits.
