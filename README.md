@@ -64,9 +64,11 @@ waiting notification names the pane too when the window is split.
 
 How it works: each agent pane is tagged `@pane_agent = "cc:working"`; a single
 pass records each window's dominant state (`@win_state`, drives the tab symbol)
-and the global `@agents_summary`. tmux `pane-exited` / `pane-died` hooks
-recompute when an agent's pane closes, so finished agents drop out. Agents
-launched outside tmux are ignored.
+and the global `@agents_summary`. Claude Code's `SessionEnd` hook clears the
+pane tag when the agent exits (so it doesn't stay stuck on its last state, e.g.
+`[cc:waiting]`), and tmux `pane-exited` / `pane-died` hooks recompute when an
+agent's pane closes, so finished agents drop out. Agents launched outside tmux
+are ignored.
 
 ## Key bindings
 

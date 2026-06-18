@@ -68,6 +68,7 @@ if [[ -d "$HOME/.claude" ]]; then
           | ensure("UserPromptSubmit"; "working")
           | ensure("Notification"; "waiting")
           | ensure("Stop"; "done")
+          | ensure("SessionEnd"; "clear")
         ' "$SETTINGS" > "$TMP" && mv "$TMP" "$SETTINGS"
         echo "Claude hooks: merged into $SETTINGS"
     fi
