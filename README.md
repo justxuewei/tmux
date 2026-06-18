@@ -64,11 +64,16 @@ waiting notification names the pane too when the window is split.
 
 How it works: each agent pane is tagged `@pane_agent = "cc:working"`; a single
 pass records each window's dominant state (`@win_state`, drives the tab symbol)
-and the global `@agents_summary`. Claude Code's `SessionEnd` hook clears the
-pane tag when the agent exits (so it doesn't stay stuck on its last state, e.g.
-`[cc:waiting]`), and tmux `pane-exited` / `pane-died` hooks recompute when an
-agent's pane closes, so finished agents drop out. Agents launched outside tmux
-are ignored.
+and the global `@agents_summary`. `UserPromptSubmit` marks a pane `working` and
+`Notification` marks it `waiting`, but resuming after a wait — answering a
+question or approving a permission prompt — fires neither, so the `working`
+state is also driven by `PreToolUse` / `PostToolUse`: any tool activity flips a
+stale `waiting` back to `working`. These fire on every tool call, so the
+dispatcher takes a fast no-op path when the state is unchanged. Claude Code's
+`SessionEnd` hook clears the pane tag when the agent exits (so it doesn't stay
+stuck on its last state, e.g. `[cc:waiting]`), and tmux `pane-exited` /
+`pane-died` hooks recompute when an agent's pane closes, so finished agents drop
+out. Agents launched outside tmux are ignored.
 
 ## Key bindings
 

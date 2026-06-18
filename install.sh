@@ -66,6 +66,8 @@ if [[ -d "$HOME/.claude" ]]; then
               + [ { hooks: [ { type: "command", command: ($cmd + " cc " + $state) } ] } ]);
           .hooks = (.hooks // {})
           | ensure("UserPromptSubmit"; "working")
+          | ensure("PreToolUse"; "working")
+          | ensure("PostToolUse"; "working")
           | ensure("Notification"; "waiting")
           | ensure("Stop"; "done")
           | ensure("SessionEnd"; "clear")

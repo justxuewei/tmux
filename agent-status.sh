@@ -92,6 +92,12 @@ esac
 # Remember the previous state so we only notify on the transition INTO waiting.
 old=$(tmux show -pv -t "$TMUX_PANE" @pane_agent 2>/dev/null)
 
+# Fast path: PreToolUse/PostToolUse fire on every tool call, so most updates
+# just repeat the current state. Skip the write, notification, and the full
+# all-panes recompute when nothing actually changed.
+new=""; [ -n "$label" ] && new="${agent}:${label}"
+[ "$new" = "$old" ] && exit 0
+
 if [ -z "$label" ]; then
   tmux set-option -pu -t "$TMUX_PANE" @pane_agent 2>/dev/null
 else
