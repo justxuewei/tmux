@@ -105,9 +105,12 @@ else
 fi
 
 # Desktop notification, naming the window (and pane, if the window is split),
-# only when it just became waiting.
-if [ "$label" = waiting ] && [ "${old#*:}" != waiting ]; then
+# only when the agent just LEFT the working state — either it finished (idle)
+# or it now needs your input (waiting). A transition that never touched working
+# (e.g. idle -> waiting) stays quiet.
+if [ "${old#*:}" = working ] && [ -n "$label" ] && [ "$label" != working ]; then
   case "$agent" in cc) who="Claude" ;; cx) who="Codex" ;; *) who="$agent" ;; esac
+  case "$label" in waiting) verb="waiting" ;; *) verb="done" ;; esac
   # One query; '|' delimited so a window name with spaces stays intact.
   info=$(tmux display-message -p -t "$TMUX_PANE" \
     '#{window_index}:#{window_name}|#{window_panes}|#{pane_index}|#{pane_tty}' 2>/dev/null)
@@ -116,7 +119,7 @@ if [ "$label" = waiting ] && [ "${old#*:}" != waiting ]; then
   pidx=${rest%%|*};  tty=${rest##*|}
   loc="$wname"; [ "${panes:-1}" -gt 1 ] && loc="$wname pane $pidx"
   # OSC 9 notification wrapped for tmux passthrough (needs allow-passthrough on).
-  [ -n "$tty" ] && printf '\ePtmux;\e\e]9;%s\a\e\\' "$who waiting — $loc" > "$tty" 2>/dev/null
+  [ -n "$tty" ] && printf '\ePtmux;\e\e]9;%s\a\e\\' "$who $verb — $loc" > "$tty" 2>/dev/null
 fi
 
 recompute
